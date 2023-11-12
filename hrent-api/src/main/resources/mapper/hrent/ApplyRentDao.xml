@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wt.hrentSystem.hrent.dao.ApplyRentDao">
+
+    <resultMap type="com.wt.hrentSystem.hrent.entity.ApplyRent" id="ApplyRentMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="applyUserId" column="apply_user_id" jdbcType="VARCHAR"/>
+        <result property="houseId" column="house_id" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="deposit" column="deposit" jdbcType="OTHER"/>
+        <result property="contractUrl" column="contract_url" jdbcType="VARCHAR"/>
+        <result property="createBy.id" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createBy.name" column="create_name" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy.id" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="remake" column="remake" jdbcType="VARCHAR"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <sql id="applyRentCols">
+        id,
+               apply_user_id,
+               house_id,
+               start_time,
+               end_time,
+               state,
+               deposit,
+               contract_url,
+               create_by,
+               (select name from sys_user su where su.id = a.create_by) as create_name,
+               create_time,
+               update_by,
+               update_time,
+               remake,
+               del_flag
+    </sql>
+
+    <!--查询单个-->
+    <select id="get" resultMap="ApplyRentMap">
+        select <include refid="applyRentCols"></include>
+        from house_rent.hrent_apply_rent a
+        where a.del_flag = 0
+              and id = #{id}
+    </select>
+
+    <!--查询单个-->
+    <select id="getByEntity" resultMap="ApplyRentMap">
+        select <include refid="applyRentCols"></include>
+        from house_rent.hrent_apply_rent a
+        where a.del_flag = 0
+            <if test="applyUserId != null and applyUserId != ''">
+                and apply_user_id = #{applyUserId}
+            </if>
+            <if test="houseId != null and houseId != ''">
+                and house_id = #{houseId}
+            </if>
+            <if test="startTime != null">
+                and start_time = #{startTime}
+            </if>
+            <if test="endTime != null">
+                and end_time = #{endTime}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+            <if test="deposit != null">
+                and deposit = #{deposit}
+            </if>
+            <if test="contractUrl != null and contractUrl != ''">
+                and contract_url = #{contractUrl}
+            </if>
+    </select>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="findList" resultMap="ApplyRentMap">
+        select
+        <include refid="applyRentCols"></include>
+        from house_rent.hrent_apply_rent a
+        <where>
+            a.del_flag = 0
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="applyUserId != null and applyUserId != ''">
+                and apply_user_id = #{applyUserId}
+            </if>
+            <if test="houseId != null and houseId != ''">
+                and house_id = #{houseId}
+            </if>
+            <if test="startTime != null">
+                and start_time = #{startTime}
+            </if>
+            <if test="endTime != null">
+                and end_time = #{endTime}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+            <if test="deposit != null">
+                and deposit = #{deposit}
+            </if>
+            <if test="contractUrl != null and contractUrl != ''">
+                and contract_url = #{contractUrl}
+            </if>
+            <if test="startTimeApply!=null and endTimeApply!=null">
+                and a.createDate between #{startTimeApply} and #{endTimeApply}
+            </if>
+            <if test="currentUser != null">
+                <!--如果当前用户为房东，那么就只查询房东拥有的房源的租房申请记录-->
+                <if test="currentUser.role == 1">
+                    and a.house_id in (select id from hrent_house_resource b
+                    where b.del_flag = 0
+                    and b.create_by = #{currentUser.id})
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <!--查询个人的租房申请记录-->
+    <select id="findPersonalViewApplyPage" resultMap="ApplyRentMap">
+        select
+        <include refid="applyRentCols"></include>
+        from house_rent.hrent_apply_rent a
+        where a.del_flag = 0
+        <!--如果查询的是未处理的数据-->
+        <if test="isHandle==0">
+            <!--如果当前用户是租户，那么就查询房东已通过，房东未通过等状态-->
+            <if test="currentUser.role==0">
+                and a.state in ('1','2')
+            </if>
+            <!--如果当前用户是房东，那么就查询申请中，押金已支付，和押金未支付的状态-->
+            <if test="currentUser.role==1">
+                and a.state in ('0','3','4')
+            </if>
+        </if>
+        <if test="isHandle==1">
+            <!--如果当前用户是租户，那么就查询申请中，押金已支付和押金未支付的状态-->
+            <if test="currentUser.role==0">
+                and a.state in ('0','3','4','5')
+            </if>
+            <!--如果当前用户是房东，那么就查询已通过，未通过等状态-->
+            <if test="currentUser.role==1">
+                and a.state in ('1','2','5')
+            </if>
+        </if>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into house_rent.hrent_apply_rent(id,
+                                                apply_user_id,
+                                                house_id,
+                                                start_time,
+                                                end_time,
+                                                state,
+                                                deposit,
+                                                contract_url,
+                                                create_by,
+                                                create_time,
+                                                update_by,
+                                                update_time,
+                                                remake,
+                                                del_flag)
+        values (#{id},#{applyUserId}, #{houseId}, #{startTime}, #{endTime}, #{state}, #{deposit}, #{contractUrl}, #{createBy.id},
+                #{createDate}, #{updateBy.id}, #{updateDate}, #{remake}, #{delFlag})
+    </insert>
+
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update house_rent.hrent_apply_rent
+        <set>
+            <if test="applyUserId != null and applyUserId != ''">
+                apply_user_id = #{applyUserId},
+            </if>
+            <if test="houseId != null and houseId != ''">
+                house_id = #{houseId},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="deposit != null">
+                deposit = #{deposit},
+            </if>
+            <if test="contractUrl != null and contractUrl != ''">
+                contract_url = #{contractUrl},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy.id},
+            </if>
+            <if test="createDate != null">
+                create_time = #{createDate},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy.id},
+            </if>
+            <if test="updateDate != null">
+                update_time = #{updateDate},
+            </if>
+            <if test="remake != null and remake != ''">
+                remake = #{remake},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <update id="delete">
+        update house_rent.hrent_apply_rent
+        <set>
+            del_flag = 1
+        </set>
+        <where>
+            1 = 1
+            <if test="id !=null and id != ''">
+                and id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <!--查询单个-->
+    <select id="countApply" resultType="java.lang.Integer">
+        select count(*) from house_rent.hrent_apply_rent
+        where create_time between #{startTime} and #{endTime}
+    </select>
+</mapper>

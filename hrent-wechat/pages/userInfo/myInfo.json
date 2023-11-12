@@ -1,0 +1,13 @@
+{
+  "usingComponents": {
+    "i-button": "../../dist/button/index",
+    "i-avatar": "../../dist/avatar/index",
+    "i-tag": "../../dist/tag/index",
+    "i-icon": "../../dist/icon/index",
+    "i-message": "../../dist/message/index",
+    "i-cell-group": "../../dist/cell-group/index",
+    "i-cell": "../../dist/cell/index",
+    "i-badge": "../../dist/badge/index",
+    "i-toast": "../../dist/toast/index"
+  }
+}

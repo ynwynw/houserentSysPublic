@@ -1,0 +1,56 @@
+{
+  "usingComponents": {},
+  "pages": [
+    "pages/index/index",
+    "pages/logs/logs",
+    "pages/userInfo/myInfo",
+    "pages/index/search/search",
+    "pages/index/houseInfo/houseInfo",
+    "pages/apply/apply",
+    "pages/userInfo/changeMyInfo",
+    "pages/apply/handle/handleViewApply",
+    "pages/userInfo/message/message",
+    "pages/userInfo/manageLogin/login",
+    "pages/apply/handle/handleRentApply",
+    "pages/userInfo/collection/collection",
+    "pages/userInfo/renting/renting",
+    "pages/userInfo/viewed/viewed"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#d81e06",
+    "navigationBarTitleText": "租房",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "selectedColor": "#d81e06",
+    "list": [
+      {
+        "iconPath": "images/icon/icon_home.png",
+        "selectedIconPath": "images/icon/icon_home_select.png",
+        "selectedColor": "#d81e06",
+        "pagePath": "pages/index/index",
+        "text": "首页"
+      },
+      {
+        "iconPath": "images/icon/icon_apply.png",
+        "selectedIconPath": "images/icon/icon_apply_select.png",
+        "selectedColor": "#d81e06",
+        "pagePath": "pages/apply/apply",
+        "text": "申请"
+      },
+      {
+        "iconPath": "images/icon/icon_my.png",
+        "selectedIconPath": "images/icon/icon_my_select.png",
+        "selectedColor": "#d81e06",
+        "pagePath": "pages/userInfo/myInfo",
+        "text": "我的"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "sitemapLocation": "sitemap.json"
+}

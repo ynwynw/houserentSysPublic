@@ -1,0 +1,137 @@
+/* pages/userInfo/myInfo.wxss */
+.myInfo{
+  border: 0;
+  background-color:white;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  border-radius: 5rpx;
+  width: 600rpx;
+  align-self: center;
+  margin: 0 auto;
+  position: absolute;
+  top: calc(45% - 556rpx);
+  left: calc(50% - 300rpx);
+}
+
+.myInfoOut{
+  height: 187rpx;
+  background-color: #d81e06;
+}
+
+.baseInfo{
+  
+  display: flex;
+}
+.loginBtn{
+  height: 40rpx !important;
+  line-height:40rpx !important ;
+  font-size: 15rpx;
+  margin-top: 80rpx !important ;
+  margin-left: 10rpx !important;
+}
+
+.btnAround{
+  margin-top: 30rpx;
+}
+
+
+.userName{
+  margin-top: 40rpx;
+  margin-left: 30rpx;
+  font-size: 40rpx;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  display: inline-block;
+}
+
+.gender{
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.changeInfo{
+  position: absolute;
+  top: 140rpx;
+  right: 0rpx;
+  font-family: 华文楷体;
+}
+
+.infoPic{
+  padding-left: 30rpx;
+  padding-top: 30rpx;
+}
+
+.i-tags{
+  width: 50rpx;
+  margin-top: 45rpx;
+}
+
+.moreInfo{
+  float: right;
+  display: flex;
+}
+
+.moreText{
+  font-size: 20rpx;
+  width: 100rpx;
+  line-height: 150rpx;
+}
+
+.moreIcon{
+  float: right;
+  line-height: 150rpx;
+}
+
+
+.headPic{
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+}
+
+page{
+  background-color: #F5F5F5;
+}
+
+.otherInfo{
+  display: flex;
+  justify-content: space-between;
+  margin:20rpx 10rpx;
+}
+
+.otherInfo>view{
+  text-align: center;
+}
+
+.count{
+  font-family: 微軟正黑體;
+  font-size: 40rpx;
+  font-weight: bold;
+}
+
+.title{
+  font-size: 20rpx;
+  font-family: 微软雅黑;
+}
+
+.funList{
+  margin-top: 200rpx;
+}
+
+.userRole{
+  margin-top: 4rpx;
+  margin-left: 20rpx;
+}
+
+.first{
+  display: block;
+  width: 100%;
+}
+
+.second{
+  display: block;
+}
+
+.nameRole{
+  display: flex;
+}

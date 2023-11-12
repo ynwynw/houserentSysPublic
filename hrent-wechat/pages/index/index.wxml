@@ -1,0 +1,71 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="searchhouse"> 
+      <text class="searchTitle">蜗牛租房</text>
+      <i-input style="border-radius: 10rpx;" value="{{condition}}" class="searchInput" mode="normal" placeholder="搜索房源" maxlength="100" bind:change="conditionInput"/>
+      <i-icon type="search" size="28" color="#80848f" class="searchIcon" bindtap="toSearch"></i-icon>
+  </view>
+  
+  <view class="infoImage">
+    <swiper indicator-dots="{{infoImage.indicatorDots}}" 
+    autoplay="{{infoImage.autoplay}}" interval="{{infoImage.interval}}" duration="{{infoImage.duration}}">
+      <block wx:for="{{infoImage.list}}" wx:key="*this">
+        <swiper-item>
+          <view>
+            <image src="{{picLocal + item.url}}" style="width: 600rpx;height: 400rpx;"></image>
+          </view>
+        </swiper-item>
+      </block>
+    </swiper>
+  </view>
+  <view class="btnMenu">
+    <i-row>
+      <block wx:for="{{btnMenu}}" wx:key="*this" >
+        <i-col span="3" i-class="col-class" bindtap="toSearch">
+          <i-avatar src="{{item.icon}}"></i-avatar>
+          <view class="menuName">{{item.name}}</view>
+        </i-col>
+        
+      </block>
+      
+    </i-row>
+    
+  </view>
+  <view class="recommend">
+    <view class="recommendTitle">
+      精品推荐
+    </view>
+    <view class="houseList">
+      <block wx:for="{{houseList}}" wx:key="*this">
+        <view class="houseCard" bindtap="toHouseInfo" data-id="{{item.id}}">
+          <view class="housePic"><image src="{{picLocal+item.picList[0].url}}" style="width: 200rpx;height: 150rpx;"></image></view>
+            <view class="hosueInfo">
+              <view class="infoTitle">{{item.rentType==0?'整租':'合租'}}|{{item.houseType}}|{{item.area}}㎡</view>
+              <!-- <view class="infoTitle">{{item.buildTime}}年建</view> -->
+              <view class="tagInfo">
+              <block wx:for="{{item.tagList}}" wx:for-item="tag">
+                <i-tag color="blue">{{tag.name}}</i-tag>
+              </block>
+              <view class="housePrice">
+                <view class="price">{{item.money}}</view>
+                <view class="priceUnit">元/月</view>
+              </view>
+              <view></view>
+              <view class="address">
+                <view class="addTitle">
+                  地址：
+                </view>
+                <view class="addressDetail">
+                  {{item.province}}{{item.city}}{{item.county}}{{item.address}}
+                </view>
+              </view>
+            </view>
+          </view>
+          
+        </view>
+      </block>
+    </view>
+    <i-load-more loading="{{ bottomLoading }}" />
+  </view>
+</view>
+<i-toast id="toast" />

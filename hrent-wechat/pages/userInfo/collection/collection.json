@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "i-icon": "../../../dist/icon/index",
+    "i-load-more": "../../../dist/load-more/index",
+    "i-toast": "../../../dist/toast/index"
+  }
+}

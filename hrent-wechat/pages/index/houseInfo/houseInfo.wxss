@@ -1,0 +1,249 @@
+/* pages/index/houseInfo/houseInfo.wxss */
+.imageInfo{
+  width: 625rpx;
+  height: 500rpx;
+  margin: 0 auto;
+  margin-top: 10rpx;
+}
+.houseInfo{
+  width: 100%;
+}
+
+.picSwiper{
+  height: 500rpx;
+}
+
+page{
+  background-color:  	#E8E8E8;
+}
+
+.baseInfoTitle{
+  font-size: 40rpx;
+  font-family: fangsong;
+  margin-bottom: 30rpx;
+}
+
+.baseInfo{
+  margin: 0;
+}
+
+.priceItem{
+  width: 100%;
+  text-align: center;
+}
+.company{
+  display: inline;
+}
+
+.housePrice{
+  display: inline;
+  font-size: 50rpx;
+  color: red;
+  font-family:'Times New Roman', Times, serif;
+  align-items: center;
+}
+
+.describeTitle{
+  font-size: 40rpx;
+  font-family: fangsong;
+  margin-bottom: 30rpx;
+}
+
+.ownerTitle{
+  font-size: 40rpx;
+  font-family: fangsong;
+  margin-bottom: 30rpx;
+}
+
+.mainInfo{
+  height: 200rpx;
+  background-color: white;
+}
+
+.headPic{
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 50%;
+  margin-top: 25rpx;
+}
+
+.nameAndGender{
+  display: flex;
+}
+
+.ownerName{
+  font-family:华文楷体;
+  margin-left: 50rpx;
+}
+
+.genderPic{
+  margin-left: 50rpx;
+  height: 50rpx;
+  width: 50rpx;
+}
+
+.houseNum{
+  font-family: 华文楷体;
+  margin-left: 50rpx;
+}
+
+.num{
+  font-family: 华文楷体;
+}
+
+.email{
+  font-family: 华文楷体;
+}
+
+.phoneNum{
+  display: flex;
+  margin-left: 100rpx;
+}
+
+.houseEmail{
+  display: flex;
+  margin-left: 100rpx;
+}
+
+.icon{
+  width: 40rpx;
+  height: 40rpx;
+}
+
+
+.mainInfo{
+  display: flex;
+}
+
+.funBtn{
+  justify-content: space-between;
+  width: 100%;
+  display: flex;
+}
+
+.i-btn{
+  margin: 10px 50px !important;
+}
+
+
+/* 自定义弹出框 */
+.mask_layer {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 999;
+left:0;top:0;
+  background: #000;
+  opacity: 0.5;
+  overflow: hidden;
+}
+.modal_box {
+  width: 76%;
+  overflow: hidden;
+  position: fixed;
+  top: 50%;
+  left: 0;
+  z-index: 1001;
+  background: white;
+  margin: -150px 12% 0 12%;
+  border-radius: 3px;
+}
+ 
+.title {
+  padding: 15px;
+  text-align: center;
+  background-color: gazure;
+}
+ 
+.content {
+  overflow-y: scroll; /*超出父盒子高度可滚动*/
+}
+ 
+ .input_show1{
+   margin: 0 auto;
+   width: 80%;
+   margin-left: 10%;
+   font-size: 32rpx;
+   text-align: center;
+ }
+.btn1 {
+  width: 100%;
+  margin-top: 65rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  background-color: white;
+}
+ 
+.cancel {
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: black;
+}
+ 
+.Sure {
+  width: 100%;
+  padding: 10px;
+  color: #d81e06;
+  background-color: white;
+  border-left: 1px solid #d0d0d0;
+  text-align: center;
+}
+
+.Sure2 {
+  width: 100%;
+  padding: 10px;
+  color: #d81e06;
+  background-color: white;
+  border-left: 1px solid #d0d0d0;
+  text-align: center;
+}
+ 
+.modalMsg {
+  text-align: center;
+  margin-top: 45rpx;
+  display: block;
+}
+
+.section__title{
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  margin: 20rpx 0;
+  color: #d81e06;
+}
+
+picker{
+  color: #5cadff;
+}
+
+.map{
+  width: 100%;
+}
+
+.mapTitle{
+  font-size: 40rpx;
+  font-family: fangsong;
+  margin-bottom: 30rpx;
+}
+
+.collection{
+  height: 140rpx;
+  width: 100rpx;
+  position:fixed;
+  top: 50%;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.collectionTitle{
+  font-size: 28rpx;
+  margin-left: 20rpx;
+}
+
+
+
+

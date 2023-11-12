@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wt.hrentSystem.hrent.dao.HouseResourceDao">
+
+    <resultMap type="com.wt.hrentSystem.hrent.entity.HouseResource" id="HouseResourceMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="province" column="province" jdbcType="VARCHAR"/>
+        <result property="city" column="city" jdbcType="VARCHAR"/>
+        <result property="county" column="county" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="money" column="money" jdbcType="DOUBLE"/>
+        <result property="area" column="area" jdbcType="INTEGER"/>
+        <result property="describe" column="describe" jdbcType="VARCHAR"/>
+        <result property="houseType" column="house_type" jdbcType="VARCHAR"/>
+        <result property="floor" column="floor" jdbcType="INTEGER"/>
+        <result property="buildTime" column="build_time" jdbcType="VARCHAR"/>
+        <result property="rentType" column="rent_type" jdbcType="INTEGER"/>
+        <result property="peopleNum" column="people_num" jdbcType="INTEGER"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="latitude" column="latitude" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+        <result property="longitude" column="longitude" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+        <result property="createBy.id" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy.id" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="remake" column="remake" jdbcType="VARCHAR"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+        <result property="houseTypeStr" column="house_type_str" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <sql id="houseResourceCols">
+            id,
+            province,
+            city,
+            county,
+            address,
+            money,
+            area,
+            `describe`,
+            house_type,
+            (select label from sys_dict sd where sd.type = 'house_type' and a.house_type = sd.value) as house_type_str,
+            floor,
+            build_time,
+            rent_type,
+            people_num,
+            latitude,
+            longitude,
+            state,
+            create_by,
+            create_time,
+            update_by,
+            update_time,
+            remake,
+            del_flag
+    </sql>
+
+    <!--查询单个-->
+    <select id="get" resultMap="HouseResourceMap">
+        select <include refid="houseResourceCols"></include>
+        from house_rent.hrent_house_resource a
+        where id = #{id}
+    </select>
+
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="findList" resultMap="HouseResourceMap">
+        select
+        <include refid="houseResourceCols"></include>
+        from house_rent.hrent_house_resource a
+        <where>
+            a.del_flag = 0
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="province != null and province != ''">
+                and a.province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                and a.city = #{city}
+            </if>
+            <if test="county != null and county != ''">
+                and a.county = #{county}
+            </if>
+            <if test="address != null and address != ''">
+                and a.address = #{address}
+            </if>
+            <if test="money != null">
+                and a.money = #{money}
+            </if>
+            <if test="area != null">
+                and a.area = #{area}
+            </if>
+            <if test="describe != null and describe != ''">
+                and `a.describe` = #{describe}
+            </if>
+            <if test="rentType != null">
+                and a.rent_type = #{rentType}
+            </if>
+            <if test="houseType != null and houseType != ''">
+                and a.house_type = #{houseType}
+            </if>
+            <if test="peopleNum != null">
+                and a.people_num = #{peopleNum}
+            </if>
+            <if test="state != null">
+                and a.state = #{state}
+            </if>
+            <!--面积，如果只填了最小面积，或最大面积，就只筛选最大面积或最小面积-->
+            <if test="minArea != null and maxArea != null">
+                and a.area between #{minArea} and #{maxArea}
+            </if>
+            <if test="minMoney != null and maxMoney != null">
+                and a.money between #{minMoney} and #{maxMoney}
+            </if>
+            <if test="tagList != null and tagList.size()>0">
+                and a.id in (select b.house_id
+                    from hrent_tag_and_house b
+                    where b.del_flag = 0
+                    and b.tag_id in
+                <foreach collection="tagList" item="item" separator="," index="" open="(" close=")">
+                    ${item.id}
+                </foreach>
+                group by b.house_id
+                having count(house_id) &gt;= #{tagNum})
+            </if>
+            <if test="condition != null and condition != ''">
+                and (a.create_by like concat('%',#{condition},'%')
+                    )
+            </if>
+            <!--如果当前用户为租户，那么就只查询正在出租的房源-->
+            <if test="currentUser.role==0">
+                and a.state = 1
+            </if>
+        </where>
+    </select>
+
+    <!--小程序模糊查询-->
+    <select id="findHouseByConditionPage" resultMap="HouseResourceMap">
+        select
+        <include refid="houseResourceCols"></include>
+        from house_rent.hrent_house_resource a
+        <where>
+            a.del_flag = 0
+            <!--查询审核通过的房源-->
+            and a.state = 1
+            <if test="id != null and id != ''">
+                and a.id = #{id}
+            </if>
+            <if test="province != null and province != ''">
+                and a.province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                and a.city = #{city}
+            </if>
+            <if test="county != null and county != ''">
+                and a.county = #{county}
+            </if>
+            <if test="address != null and address != ''">
+                and a.address = #{address}
+            </if>
+            <if test="money != null">
+                and a.money = #{money}
+            </if>
+            <if test="area != null">
+                and a.area = #{area}
+            </if>
+            <if test="describe != null and describe != ''">
+                and `a.describe` = #{describe}
+            </if>
+            <if test="rentType != null">
+                and a.rent_type = #{rentType}
+            </if>
+            <if test="houseType != null and houseType != ''">
+                and a.house_type = #{houseType}
+            </if>
+            <if test="peopleNum != null">
+                and a.people_num = #{peopleNum}
+            </if>
+            <if test="state != null">
+                and a.state = #{state}
+            </if>
+            <!--面积，如果只填了最小面积，或最大面积，就只筛选最大面积或最小面积-->
+            <if test="minArea != null and maxArea != null">
+                and a.area between #{minArea} and #{maxArea}
+            </if>
+            <if test="minMoney != null and maxMoney != null">
+                and a.money between #{minMoney} and #{maxMoney}
+            </if>
+            <if test="tagList != null and tagList.size()>0">
+                and a.id in (select b.house_id
+                from hrent_tag_and_house b
+                where b.del_flag = 0
+                and b.tag_id in
+                <foreach collection="tagList" item="item" separator="," index="" open="(" close=")">
+                    ${item.id}
+                </foreach>
+                group by b.house_id
+                having count(house_id) &gt;= #{tagNum})
+            </if>
+            <if test="condition != null and condition != ''">
+                and concat(a.province,a.city,a.county,a.address) like concat('%',#{condition},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findByRolePage" resultMap="HouseResourceMap">
+        select
+        <include refid="houseResourceCols"></include>
+        from house_rent.hrent_house_resource a
+        where   a.del_flag = 0
+                <if test="id != null and id != ''">
+                    and a.id = #{id}
+                </if>
+                <if test="province != null and province != ''">
+                    and a.province = #{province}
+                </if>
+                <if test="city != null and city != ''">
+                    and a.city = #{city}
+                </if>
+                <if test="county != null and county != ''">
+                    and a.county = #{county}
+                </if>
+                <if test="address != null and address != ''">
+                    and a.address = #{address}
+                </if>
+                <if test="money != null">
+                    and a.money = #{money}
+                </if>
+                <if test="area != null">
+                    and a.area = #{area}
+                </if>
+                <if test="rentType != null">
+                    and a.rent_type = #{rentType}
+                </if>
+                <if test="houseType != null and houseType != ''">
+                    and a.house_type = #{houseType}
+                </if>
+                <if test="peopleNum != null">
+                    and a.people_num = #{peopleNum}
+                </if>
+                <if test="tagList != null and tagList.size()>0">
+                    and a.id in (select b.house_id
+                    from hrent_tag_and_house b
+                    where b.del_flag = 0
+                    and b.tag_id in
+                    <foreach collection="tagList" item="item" separator="," index="" open="(" close=")">
+                        ${item.id}
+                    </foreach>
+                    group by b.house_id
+                    having count(house_id) &gt;= #{tagNum})
+                </if>
+                <if test="currentUser!=null and currentUser.id != ''">
+                    <!--只查询出当前用户提交的房源信息-->
+                    and a.create_by = #{currentUser.id}
+                </if>
+    </select>
+
+    <!--查询某个用户的房源数量-->
+    <select id="getCountByUserId" resultType="java.lang.Integer">
+        select count(1) from hrent_house_resource a
+        where a.del_flag = 0
+        and a.state = 2
+        and a.create_by = #{userId}
+    </select>
+
+    <!--查询我看过的房源-->
+    <select id="findViewedHousePage" resultMap="HouseResourceMap">
+        select <include refid="houseResourceCols"></include>
+        from hrent_house_resource a
+        where a.del_flag = 0
+        and a.id in (select b.house_id from hrent_apply_view b
+                                       where b.del_flag = 0
+                                       <if test="currentUser !=null">
+                                           and b.apply_user_id = #{currentUser.id}
+                                           and b.state in ('1','3','4','5','6')
+                                       </if> )
+    </select>
+
+    <!--查询我收藏的房源-->
+    <select id="findCollectionHousePage" resultMap="HouseResourceMap">
+        select <include refid="houseResourceCols"></include>
+        from hrent_house_resource a
+        where a.del_flag = 0
+        and a.id in (select b.house_id from hrent_collection b
+                                       where b.del_flag = 0
+                                       <if test="currentUser != null">
+                                           and b.user_id = #{currentUser.id}
+                                       </if> )
+    </select>
+
+    <!--查询我正在租的房源-->
+    <select id="findRentingHousePage" resultMap="HouseResourceMap">
+        select <include refid="houseResourceCols"></include>
+        from hrent_house_resource a
+        where a.del_flag = 0
+        and a.id in (select b.house_id from hrent_house_renting b
+                                       where b.del_flag = 0
+                                       and b.end_time &gt; NOW()
+                                       <if test="currentUser != null">
+                                           and b.tenant_id = #{currentUser.id}
+                                       </if> )
+    </select>
+
+    <select id="findScaleCount" resultType="java.lang.Integer">
+        select count(1) from hrent_house_resource a
+        where a.del_flag = 0
+        <if test="currentUser.role==1">
+            and a.create_by = #{currentUser.id}
+        </if>
+        <if test="county != null and county != ''">
+            and a.county = #{county}
+        </if>
+        <if test="minMoney != null and maxMoney != null">
+            and a.money between #{minMoney} and #{maxMoney}
+        </if>
+        <if test="minArea != null and maxArea != null">
+            and a.area between #{minArea} and #{maxArea}
+        </if>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into house_rent.hrent_house_resource(id,
+                                                    province,
+                                                    city,
+                                                    county,
+                                                    address,
+                                                    money,
+                                                    area,
+                                                    `describe`,
+                                                    house_type,
+                                                    floor,
+                                                    latitude,
+                                                    longitude,
+                                                    build_time,
+                                                    rent_type,
+                                                    people_num,
+                                                    state,
+                                                    create_by,
+                                                    create_time,
+                                                    update_by,
+                                                    update_time,
+                                                    remake,
+                                                    del_flag)
+        values (#{id},#{province}, #{city}, #{county}, #{address}, #{money}, #{area},#{describe},
+                #{houseType},#{floor},#{latitude},#{longitude},#{buildTime},#{rentType}, #{peopleNum},#{state}, #{createBy.id},
+                #{createDate},#{updateBy.id}, #{updateDate}, #{remake}, #{delFlag})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update house_rent.hrent_house_resource
+        <set>
+            <if test="province != null and province != ''">
+                province = #{province},
+            </if>
+            <if test="city != null and city != ''">
+                city = #{city},
+            </if>
+            <if test="county != null and county != ''">
+                county = #{county},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="money != null">
+                money = #{money},
+            </if>
+            <if test="area != null">
+                area = #{area},
+            </if>
+            <if test="describe != null and describe != ''">
+                `describe` = #{describe},
+            </if>
+            <if test="houseType != null and houseType != ''">
+                houseType=#{houseType},
+            </if>
+            <if test="floor != null and floor != ''">
+                floor=#{floor},
+            </if>
+            <if test="buildTime != null and buildTime != ''">
+                buildTime=#{buildTime},
+            </if>
+            <if test="rentType != null">
+                rent_type = #{rentType},
+            </if>
+            <if test="peopleNum != null">
+                people_num = #{peopleNum},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="latitude!=null">
+                latitude = #{latitude},
+            </if>
+            <if test="longitude!=null">
+                longitude = #{longitude},
+            </if>
+            <if test="createBy != null and createBy.id != ''">
+                create_by = #{createBy.id},
+            </if>
+            <if test="createDate != null">
+                create_time = #{createDate},
+            </if>
+            <if test="updateBy != null and updateBy.id != ''">
+                update_by = #{updateBy.id},
+            </if>
+            <if test="updateDate != null">
+                update_time = #{updateDate},
+            </if>
+            <if test="remake != null and remake != ''">
+                remake = #{remake},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <update id="delete">
+        update house_rent.hrent_house_resource
+        <set>
+            del_flag = 1
+        </set>
+        <where>
+            1 = 1
+            <if test="id !=null and id != ''">
+                and id = #{id}
+            </if>
+        </where>
+    </update>
+
+</mapper>
+

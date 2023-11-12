@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wt.hrentSystem.hrent.dao.TagDao">
+
+    <resultMap type="com.wt.hrentSystem.hrent.entity.Tag" id="TagMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="rgb" column="rgb" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="createBy.id" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy.id" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="remake" column="remake" jdbcType="VARCHAR"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="TagDtoMap" type="com.wt.hrentSystem.hrent.entity.dto.TagDto">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="rgb" column="rgb" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="createBy.id" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy.id" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="houseId" column="house_id" jdbcType="VARCHAR"/>
+        <result property="remake" column="remake" jdbcType="VARCHAR"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--标签相关列-->
+    <sql id="tagCols">
+               id,
+               name,
+               rgb,
+               state,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remake,
+               del_flag
+    </sql>
+
+    <!--查询单个-->
+    <select id="get" resultMap="TagMap">
+        select <include refid="tagCols"></include>
+        from house_rent.hrent_tag
+        where id = #{id}
+    </select>
+
+    <!--通过房源id查找所有标签-->
+    <select id="findByHouseId" resultMap="TagDtoMap">
+        select a.id,
+               a.name,
+               a.state,
+               b.del_flag,
+               a.rgb,
+               b.house_id,
+               b.create_by,
+               b.create_time,
+               b.update_by,
+               b.update_time
+        from hrent_tag a,hrent_tag_and_house b
+        where a.del_flag = 0
+        and b.del_flag = 0
+        and a.id = b.tag_id
+        and b.house_id = #{houseId}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="findList" resultMap="TagMap">
+        select
+        <include refid="tagCols"></include>
+        from house_rent.hrent_tag
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="name != null and name != ''">
+                and name = #{name}
+            </if>
+            <if test="rgb != null and rgb != ''">
+                and rgb = #{rgb}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+            <if test="createDate != null">
+                and create_time = #{createDate}
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                and update_by = #{updateBy}
+            </if>
+            <if test="updateDate != null">
+                and update_time = #{updateDate}
+            </if>
+            <if test="remake != null and remake != ''">
+                and remake = #{remake}
+            </if>
+            <if test="delFlag != null">
+                and del_flag = #{delFlag}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into house_rent.hrent_tag(id,
+                                         name,
+                                         rgb,
+                                         state,
+                                         create_by,
+                                         create_time,
+                                         update_by,
+                                         update_time,
+                                         remake,
+                                         del_flag)
+        values (#{id},#{name}, #{rgb}, #{state}, #{createBy}, #{createDate}, #{updateBy}, #{updateDate}, #{remake},
+                #{delFlag})
+    </insert>
+
+    <insert id="addHouseTags" keyProperty="id" useGeneratedKeys="true">
+        insert into house_rent.hrent_tag_and_house(id,
+                                                   house_id,
+                                                   tag_id,
+                                                   create_by,
+                                                   create_time,
+                                                   update_by,
+                                                   update_time,
+                                                   remake,
+                                                   del_flag)
+        values(#{id},#{houseId},#{tagId},#{createBy.id},#{createDate},#{updateBy.id},#{updateDate},#{remake},#{delFlag})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update house_rent.hrent_tag
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="rgb != null and rgb != ''">
+                rgb = #{rgb},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="createBy != null and createBy != ''">
+                create_by = #{createBy},
+            </if>
+            <if test="createDate != null">
+                create_time = #{createDate},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
+            <if test="updateDate != null">
+                update_time = #{updateDate},
+            </if>
+            <if test="remake != null and remake != ''">
+                remake = #{remake},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <update id="delete">
+        update house_rent.hrent_tag
+        <set>
+            del_flag = 1
+        </set>
+        <where>
+            1 = 1
+            <if test="id !=null and id != ''">
+                and id = #{id}
+            </if>
+        </where>
+    </update>
+
+    <!--删除房源的所有标签-->
+    <delete id="deleteByHouseId">
+        delete from house_rent.hrent_tag_and_house
+        where house_id = #{houseId}
+    </delete>
+
+</mapper>
+

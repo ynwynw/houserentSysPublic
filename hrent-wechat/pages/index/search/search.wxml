@@ -1,0 +1,94 @@
+<!--pages/index/search/search.wxml-->
+<view class="container">
+  <view class="searchhouse"> 
+      <!-- <text class="searchTitle">XX租房</text> -->
+      <i-input style="border-radius: 10rpx;" value = "{{condition}}" class="searchInput" mode="mode" bind:focus="history" maxlength="100" placeholder="搜索房源" bind:change="conditionChange"/>
+      <i-icon type="search" size="28" color="#80848f" class="searchIcon" bindtap="searchHouse"></i-icon>
+      <i-button bind:click="toggleRight" inline="true" i-class="conditionBtn">更多条件</i-button>
+      <i-drawer mode="right" visible="{{showRight}}" bind:close="toggleRight">
+        <view class="options" style="background-color: white;">
+          <view class="rentType">
+            <view class="typeTitle">出租类型：</view>
+            <view class="type" bindtap="chooseRentType">{{rentTypeStr}}</view>
+          </view>
+          <view class="areaTitle">房源大小(㎡)：</view>
+          <view class="areaOut">
+            <i-input i-class="areaInput" value="{{minArea}}" type="number" 
+                right mode="wrapped" placeholder="最小面积" style="width: 200rpx;" 
+                maxlength="10" bind:change="minAreaChange"></i-input>
+            <view class="areaCenter">-</view>
+            <i-input i-class="areaIput" value="{{maxArea}}" type="number" 
+                right mode="wrapped" placeholder="最大面积" style="width: 200rpx;" 
+                maxlength="10" bind:change="maxAreaChange"></i-input>
+          </view>
+          <view class="moneyTitle">租金(元/月)：</view>
+          <view class="rentMoneyOut">
+            <i-input i-class="areaInput" value="{{minRentMoney}}" type="number" 
+                right mode="wrapped" placeholder="最小金额" style="width: 200rpx;" 
+                maxlength="10" bind:change="minRentMoneyChange"></i-input>
+            <view class="areaCenter">-</view>
+            <i-input i-class="areaIput" value="{{maxRentMoney}}" type="number" 
+                right mode="wrapped" placeholder="最大金额" style="width: 200rpx;" 
+                maxlength="10" bind:change="maxRentMoneyChange"></i-input>
+          </view>
+          <view class="selection">
+            <view class="tagsTitle">标签(点击即可去除)：</view>
+            <picker bindchange="tagChoose" range="{{allTagsStr}}">
+              <view class="picker">
+                <view style="color: #5cadff;">添加</view>
+              </view>
+            </picker>
+          </view>
+          <view class="tagInfo">
+            <block wx:for="{{chooseTags}}" wx:for-item="tag">
+              <i-tag color="blue" i-class="tag" bindtap="remove" data-id="{{tag.id}}">{{tag.name}}</i-tag>
+            </block>
+          </view>
+          <view class="addressOut">
+            <view class="addressTitle"></view>
+            <picker mode="region" bindchange="bindRegionChange" value="{{region}}" custom-item="{{customItem}}">
+              <view class="picker" style="color: #5cadff;">
+                当前选择：{{region[0]}}，{{region[1]}}，{{region[2]}}
+              </view>
+            </picker>
+          </view>
+          <view class="funBtn">
+            <i-button type="primary" inline="true" size="small" i-class="emptyBtn" bind:click="clearInfo">清空</i-button>
+            <i-button type="primary" inline="true" size="small" i-class="sureBtn" bind:click="searchHouse">确定</i-button>
+          </view>
+        </view>
+        
+      </i-drawer>
+      <i-action-sheet visible="{{rentTypeVisible}}" actions="{{allRentType}}" show-cancel bind:cancel="rentTypeCancel" bind:click="rentTypeClick"></i-action-sheet>
+  </view>
+  <view class="houseList">
+    <block wx:for="{{houseList}}" wx:key="*this">
+      <view class="houseCard" bindtap="toHouseInfo" data-id="{{item.id}}">
+        <view class="housePic"><image src="{{picLocal+item.picList[0].url}}" style="width: 200rpx;height: 150rpx;"></image></view>
+          <view class="hosueInfo">
+            <view class="infoTitle">{{item.rentType==0?'整租':'合租'}}|{{item.houseType}}|{{item.area}}㎡|{{item.buildTime}}年建</view>
+            <view class="tagInfo">
+            <block wx:for="{{item.tagList}}" wx:for-item="tag">
+              <i-tag color="blue">{{tag.name}}</i-tag>
+            </block>
+            <view class="housePrice">
+              <view class="price">{{item.money}}</view>
+              <view class="priceUnit">元/月</view>
+            </view>
+            <view class="address">
+              <view class="addTitle">
+                地址：
+              </view>
+              <view class="addressDetail">
+                {{item.province}}{{item.city}}{{item.county}}{{item.address}}
+              </view>
+            </view>
+          </view>
+        </view>
+        
+      </view>
+    </block>
+  </view>
+  <i-load-more loading="{{ bottomLoading }}" />
+</view>
+<i-toast id="toast" />

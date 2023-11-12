@@ -1,0 +1,58 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/house_rent?serverTimeZone=GMT%2B8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    name: hrent
+    hikari:
+      auto-commit: true
+      #空闲连接超时时长
+      idle-timeout: 60000
+      #连接超时时长
+      connection-timeout: 60000
+      #最大生命周期，0不过期
+      max-lifetime: 0
+      #最小空闲连接数
+      minimum-idle: 10
+      #最大连接数量
+      maximum-pool-size: 10
+
+mybatis:
+  mapper-locations: classpath:mapper/*/*.xml
+  type-aliases-package: com.wt.hrentSystem.**.entity
+  configuration:
+    log-impl=org:
+      apache:
+        ibatis:
+          logging:
+            stdout:
+              StdOutImpl:
+sys:
+  name: 房屋租赁管理系统
+  id: 01
+
+logging:
+  level:
+    com:
+      wt:
+        hrentSystem:
+          common: debug
+          hrent: debug
+server:
+  port: 8888
+  servlet:
+    context-path: /hrent
+
+#分页配置
+pageSize: 10
+pageNo: 1
+
+ip: 192.168.1.227
+
+#文件配置
+file:
+  local: E:\educationProject\房屋租赁系统\houserentSys\hrent-api\src\main\resources\static\images
+  picLocal: E:/educationProject/房屋租赁系统/houserentSys/hrent-api/src/main/resources/static/images
+  visitLocal: localhost:8888/hrent/images
+

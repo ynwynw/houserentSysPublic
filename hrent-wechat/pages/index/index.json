@@ -1,0 +1,19 @@
+{
+  "component":true,
+  "usingComponents": {
+    "i-button": "../../dist/button/index",
+    "i-notice-bar":"../../dist/notice-bar/index",
+    "i-tab-bar": "../../dist/tab-bar/index",
+    "i-tab-bar-item": "../../dist/tab-bar-item/index",
+    "i-input": "../../dist/input/index",
+    "i-drawer":"../../dist/drawer/index",
+    "i-icon": "../../dist/icon/index",
+    "i-avatar": "../../dist/avatar/index",
+    "i-row": "../../dist/row/index",
+    "i-col": "../../dist/col/index",
+    "i-card": "../../dist/card/index",
+    "i-tag": "../../dist/tag/index",
+    "i-load-more": "../../dist/load-more/index",
+    "i-toast": "../../dist/toast/index"
+  }
+}

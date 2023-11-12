@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wt.hrentSystem.common.dao.DictDao">
+
+    <resultMap type="com.wt.hrentSystem.common.entity.Dict" id="DictMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="value" column="value" jdbcType="VARCHAR"/>
+        <result property="label" column="label" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="sort" column="sort" jdbcType="VARCHAR"/>
+        <result property="createBy.id" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createBy.name" column="create_name" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy.id" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateBy.name" column="update_name" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="remake" column="remake" jdbcType="VARCHAR"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="DictMap">
+        select id,
+               value,
+               label,
+               type,
+               description,
+               sort,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remake,
+               del_flag
+        from house_rent.sys_dict
+        where id= #{id}
+    </select>
+
+    <sql id="dictCols">
+               id,
+               value,
+               label,
+               type,
+               description,
+               sort,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remake,
+               del_flag
+    </sql>
+
+    <!--查询指定行数据-->
+    <select id="get" resultMap="DictMap">
+        select <include refid="dictCols"></include>
+        from house_rent.sys_dict
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="findList" resultMap="DictMap">
+        select
+        <include refid="dictCols"></include>,
+        (select name from sys_user su where su.id = a.create_by) as "create_name",
+        (select name from sys_user su where su.id = a.update_by) as "update_name"
+        from house_rent.sys_dict a
+        <where>
+            del_flag = 0
+            <if test="value != null and value != ''">
+                and value = #{value}
+            </if>
+            <if test="label != null and label != ''">
+                and label = #{label}
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="sort != null and sort != ''">
+                and sort = #{sort}
+            </if>
+            <if test="createBy != null and createBy.id != ''">
+                and create_by = #{createBy.id}
+            </if>
+            <if test="createDate != null">
+                and create_time = #{createDate}
+            </if>
+            <if test="updateBy != null and updateBy.id != ''">
+                and update_by = #{updateBy}
+            </if>
+            <if test="updateDate != null">
+                and update_time = #{updateDate}
+            </if>
+            <if test="condition != null and condition != ''">
+                and (a.label like concat('%',#{condition},'%')
+                or a.description like concat('%',#{condition},'%'))
+            </if>
+        </where>
+        order by sort
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="" useGeneratedKeys="true">
+        insert into house_rent.sys_dict(id,
+                                        value,
+                                        label,
+                                        type,
+                                        description,
+                                        sort,
+                                        create_by,
+                                        create_time,
+                                        update_by,
+                                        update_time,
+                                        remake,
+                                        del_flag)
+        values (#{id}, #{value}, #{label}, #{type}, #{description}, #{sort}, #{createBy.id}, #{createDate}, #{updateBy.id},
+                #{updateDate}, #{remake}, #{delFlag})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update" parameterType="com.wt.hrentSystem.common.entity.Dict">
+        update house_rent.sys_dict
+        <set>
+            <if test="value != null and value != ''">
+                value = #{value},
+            </if>
+            <if test="label != null and label != ''">
+                label = #{label},
+            </if>
+            <if test="type != null and type != ''">
+                type = #{type},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="sort != null and sort != ''">
+                sort = #{sort},
+            </if>
+            <if test="createBy != null and createBy.id != ''">
+                create_by = #{createBy.id},
+            </if>
+            <if test="createDate != null">
+                create_time = #{createDate},
+            </if>
+            <if test="updateBy != null and updateBy.id != ''">
+                update_by = #{updateBy.id},
+            </if>
+            <if test="updateDate != null">
+                update_time = #{updateDate},
+            </if>
+            <if test="remake != null and remake != ''">
+                remake = #{remake},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where id= #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        update house_rent.sys_dict
+        <set>
+            del_flag = 1,
+        </set>
+        where
+        1=1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+    </delete>
+
+    <select id="findAllType" resultMap="DictMap">
+        select type,
+               @rowno:=@rowno+1 as id
+        from sys_dict,
+             (select @rowno:=0)b
+        group by type
+    </select>
+
+</mapper>

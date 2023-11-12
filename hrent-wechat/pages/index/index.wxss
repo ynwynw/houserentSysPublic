@@ -1,0 +1,167 @@
+/**index.wxss**/
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #D3D3D3;
+  background-color: #D3D3D3;
+}
+
+/* .userinfo-avatar {
+  overflow: hidden;
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.usermotto {
+  margin-top: 200px;
+}
+
+
+.is-ios{
+  height: env(safe-area-inset-bottom);
+  background-color: #ffffff;
+} */
+.drawer{
+  background-color: aliceblue;
+  display: flex;
+}
+.searchhouse{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.searchIcon{
+  margin-left: 20rpx;
+  margin-top: 10rpx;
+}
+
+.container{
+  width: 100%;
+}
+
+.infoImage{
+  margin-top: 20rpx;
+  width: 600rpx;
+  height: 400rpx;
+}
+
+.searchTitle{
+  float: left;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  margin-top: 20rpx;
+}
+
+.searchInput{
+  display: inline;
+  float: left;
+  width: 500rpx;
+  margin-top: 15rpx;
+  margin-left: 20rpx;
+}
+
+.col-class{
+  width: 80%;
+  margin-left: 80rpx;
+}
+
+.menuName{
+  font-size: 25rpx;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  width: 100rpx;
+  text-align: center;
+  margin-left: -15rpx;
+}
+
+.btnMenu{
+  width: 100%;
+}
+
+.recommend{
+  width: 100%;
+}
+
+.houseCard{
+  margin: 10rpx 30rpx;
+  height: 220rpx;
+  background-color:white;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  display: flex;
+  border-radius: 10rpx;
+justify-content: flex;
+}
+
+.housePic{
+  display: inline;
+}
+
+.houseInfo{
+  display: flex;
+}
+
+.infoTitle{
+  height: 40rpx;
+  font-size: 25rpx;
+  font-family: 'Courier New', Courier, monospace;
+  flex-basis: 100%;
+  margin-left: 20rpx;
+}
+
+.tagInfo{
+  display: block;
+}
+
+.housePrice{
+  display: flex;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 25rpx;
+  margin-left: 110rpx;
+}
+.price{
+  font-size: 40rpx;
+  color: red;
+  font-family:'Times New Roman', Times, serif
+}
+.priceUnit{
+  margin-top: 15rpx;
+  margin-left: 10rpx;
+}
+.addTitle{
+
+}
+.addressDetail{
+  flex: 5;
+}
+.address{
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 20rpx;
+  display: flex;
+}
+
+
+.housePic>image{
+  margin: 25rpx 30rpx;
+}
+
+i-tag{
+  width: auto;
+  margin: 0 15rpx;
+}
+
+.recommendTitle{
+  font-size: 40rpx;
+  font-family:'Times New Roman', Times, serif;
+  align-items:flex-start;
+  margin-left: 30rpx;
+  margin-top: 20rpx;
+}
+
+
+
+page{
+  background-color: #EEE9E9;
+  display: flex;
+}

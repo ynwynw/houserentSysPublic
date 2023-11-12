@@ -1,0 +1,72 @@
+<!--pages/userInfo/myInfo.wxml-->
+<i-message id="message" />
+<view class="myPage">
+  <view class="myInfoOut">
+
+  </view>
+  <view class="myInfo">
+    <view class="baseInfo">
+      <view class="infoPic">
+        <image wx:if="{{!user.headUrl}}" model:src="{{picLocal+baseHeadPic}}" class="headPic"></image>
+        <image wx:if="{{user.headUrl}}" model:src="{{user.openId==null?picLocal+user.headUrl:picLocal+user.headUrl}}" class="headPic"></image>
+        <!-- <image model:src="{{!user.headUrl?baseHeadPic:user.openid==null?picLocal+user.headUrl:user.headUrl}}" class="headPic"></image> -->
+      </view>
+      <view class="nameRole">
+        <view class="infoDetail">
+          <view class="userName" wx:if="{{user.name!=''}}">{{user.name}}</view>
+          <view class="btnAround">
+            <i-button i-class="loginBtn" wx:if="{{!user.name}}" bindtap="getUserProfile" open-type="getUserProfile" bindgetuserinfo="getUserProfile">登录</i-button>
+          </view>
+          <view class="gender">
+            <i-avatar wx:if="{{user.sex=='0'}}" src="../../images/icon/gender/man.png"></i-avatar>
+            <i-avatar wx:if="{{user.sex=='1'}}" src="../../images/icon/gender/woman.png"></i-avatar>
+          </view>
+        </view>
+        <view class="userRole" wx:if="{{user.roleStr}}">
+          <i-tag i-class="i-tags" color="green" type="dot">{{user.roleStr}}</i-tag>
+        </view>
+      </view>
+      <view class="changeInfo" bindtap="toChangeInfo" wx:if="{{user!=''}}">修改个人信息
+        <i-icon type="enter" />
+      </view>
+    </view>
+    <view class="otherInfo">
+      <view class="visited" bindtap="toVisited">
+        <view class="count">{{count.visited}}</view>
+        <view class="title">我看过的</view>
+      </view>
+      <view class="collection" bindtap="toCollection">
+        <view class="count">{{count.collection}}</view>
+        <view class="title">我收藏的</view>
+      </view>
+      <view class="myHouse" wx:if="{{!user.openId}}" bindtap="toMyHouse">
+        <view class="count">{{count.myHouse}}</view>
+        <view class="title">我的房源</view>
+      </view>
+      <view class="myRent" wx:if="{{user.openId}}" bindtap="toMyRent">
+        <view class="count">{{count.myRent}}</view>
+        <view class="title">我正在租</view>
+      </view>
+    </view>
+  </view>
+  <view class="funList">
+    <view class="iviewList">
+      <i-cell is-link value="详情" url="/pages/userInfo/message/message">
+        <i-badge count="{{count.messageCount}}">
+          <view>我的消息</view>
+        </i-badge>
+      </i-cell>
+      <!-- <i-cell is-link value="详情" bindtap="rentManage">
+        <i-badge count="{{0}}">
+          <view>租金管理</view>
+        </i-badge>
+      </i-cell>
+      <i-cell is-link>关于项目</i-cell> -->
+    </view>
+  </view>
+  <view class="funBtn">
+    <i-button type="error" bind:click="changeLogin" size="small">切换管理端账号登录</i-button>
+    <i-button type="error" bind:click="getUserProfile" size="small" wx:if="{{!user.openId}}" open-type="getUserProfile" bindgetuserinfo="getUserProfile">微信直接登录</i-button>
+  </view>
+</view>
+<i-toast id="toast" />

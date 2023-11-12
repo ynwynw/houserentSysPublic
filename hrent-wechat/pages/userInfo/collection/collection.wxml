@@ -1,0 +1,35 @@
+<!--pages/userInfo/collection/collection.wxml-->
+<view class="collectionPage">
+  <view class="houseList">
+    <block wx:for="{{houseList}}" wx:key="*this">
+      <view class="houseCard" bindtap="toHouseInfo" data-id="{{item.id}}">
+        <view class="housePic">
+          <image src="{{picLocal+item.picList[0].url}}" style="width: 200rpx;height: 150rpx;"></image>
+        </view>
+        <view class="hosueInfo">
+          <view class="infoTitle">{{item.rentType==0?'整租':'合租'}}|{{item.houseType}}|{{item.area}}㎡|{{item.buildTime}}年建</view>
+          <view class="tagInfo">
+            <block wx:for="{{item.tagList}}" wx:for-item="tag">
+              <i-tag color="blue">{{tag.name}}</i-tag>
+            </block>
+            <view class="housePrice">
+              <view class="price">{{item.money}}</view>
+              <view class="priceUnit">元/月</view>
+            </view>
+            <view class="address">
+              <view class="addTitle">
+                地址：
+              </view>
+              <view class="addressDetail">
+                {{item.province}}{{item.city}}{{item.county}}{{item.address}}
+              </view>
+            </view>
+          </view>
+        </view>
+
+      </view>
+    </block>
+  </view>
+  <i-load-more loading="{{ bottomLoading }}" />
+</view>
+<i-toast id="toast" />

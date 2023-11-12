@@ -1,0 +1,143 @@
+<!--pages/index/houseInfo/houseInfo.wxml-->
+<i-message id="message" />
+<view class="houseInfo">
+  <view class="imageInfo">
+    <swiper indicator-dots="{{imageSetting.indicatorDots}}" class="picSwiper" autoplay="{{imageSetting.autoplay}}" interval="{{imageSetting.interval}}" duration="{{imageSetting.duration}}">
+      <block wx:for="{{houseReource.picList}}" wx:key="*this">
+        <swiper-item>
+          <view>
+            <image src="{{picLocal+item.url}}"></image>
+          </view>
+        </swiper-item>
+      </block>
+    </swiper>
+  </view>
+  <view class="baseInfo">
+    <view class="priceItem">
+      <view class="housePrice">{{houseReource.money}}</view>
+      <view class="company">元/月</view>
+    </view>
+    <i-divider color="#2d8cf0" lineColor="#2d8cf0"></i-divider>
+    <view class="baseInfoTitle">基本信息</view>
+    <view class="otherInfo">
+      <view class="province">所在地区：{{houseReource.province+houseReource.city+houseReource.county}}</view>
+      <view class="address">地址：{{houseReource.address}}</view>
+      <view class="area">面积：{{houseReource.area}}</view>
+      <view class="houseType">户型：{{houseReource.houseType}}</view>
+      <view class="floor">楼层：{{houseReource.floor}}</view>
+      <view class="buildTime">修建时间：{{houseReource.buildTime}}年</view>
+    </view>
+  </view>
+  <i-divider color="#2d8cf0" lineColor="#2d8cf0"></i-divider>
+  <view class="houseDescribe">
+    <view class="describeTitle">房源描述</view>
+    <view class="describe">{{houseReource.describe}}</view>
+  </view>
+  <i-divider color="#2d8cf0" lineColor="#2d8cf0"></i-divider>
+  <view class="houseMap">
+    <view class="mapTitle">周边环境</view>
+    <map
+      id="mapId"
+      class="map"
+      latitude="{{houseReource.latitude}}"
+      longitude="{{houseReource.longitude}}"
+      bindmarkertap="onMarkerTap"
+      bindcallouttap="onCalloutTap"
+      bindlabeltap="onLabelTap"
+      markers="{{markers}}"
+      ></map>
+  </view>
+  <i-divider color="#2d8cf0" lineColor="#2d8cf0"></i-divider>
+  <view class="ownerInfo">
+    <view class="ownerTitle">房东信息</view>
+    <view class="mainInfo">
+      <view class="wonerPic">
+        <image model:src="{{owner.headUrl==null?baseHeadPic:picLocal+owner.headUrl}}" class="headPic"></image>
+      </view>
+      <view class="ownerDetail">
+        <view class="nameAndGender">
+          <view class="wonerGender">
+            <image wx:if="{{owner.sex=='0'}}" src="../../../images/icon/gender/man.png" class="genderPic"></image>
+            <image wx:if="{{owner.sex=='1'}}" src="../../../images/icon/gender/woman.png" class="genderPic"></image>
+          </view>
+          <view class="ownerName">{{owner.name}}</view>
+        </view>
+        <view class="houseNum">拥有房源：{{owner.houseNum}}</view>
+        <view class="phoneNum">
+          <i-icon type="mobilephone" style="color: #d81e06;" i-class="icon" />
+          <view class="num">{{owner.mobile}}</view>
+        </view>
+        <view class="houseEmail">
+          <i-icon type="mail" style="color: #d81e06;" i-class="icon" />
+          <view class="email">{{owner.email}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="funBtn">
+    <i-button bind:click="handleClick" type="error" shape="circle" size="small" style="margin-left: 50rpx;" inline="true" bind:click="toApplyLook">预约看房</i-button>
+    <i-button bind:click="handleClick" type="error" shape="circle" size="small" style="margin-right: 50rpx;" inline="true" bindgetphonenumber="toApplyRent" open-type="getPhoneNumber">我要租房</i-button>
+  </view>
+  <i-modal title="提示" visible="{{ rentVisiable }}" bind:ok="sureRent" bind:cancel="cancelRent">
+    <view style="color: #d81e06;">确定要申请租这个房源吗？</view>
+  </i-modal>
+  <view wx:if="{{showModal}}">
+    <view class='mask_layer' bindtap='modal_click_Hidden' />
+    <view class='modal_box'>
+      <view class="title">预约看房</view>
+      <view class='content'>
+        <text class='modalMsg'></text>
+        <!-- <textarea class='input_show1' bindinput='changeCancelReason' auto-height value='{{modalMsg}}' bindfocus='bindfocus' bindblur='bindblur' placeholder='{{modalMsg_placeholder}}'></textarea> -->
+        <view class="section">
+          <view class="section__title">请选择日期</view>
+          <picker mode="date" value="{{viewDate}}" start="2022-03-01" end="2023-01-01" bindchange="bindDateChange">
+            <view class="picker">
+              当前选择日期: {{viewDate}}
+            </view>
+          </picker>
+        </view>
+        <!--时间-->
+        <view class="section">
+          <view class="section__title">请选择预约时间</view>
+          <picker mode="time" value="{{viewTime}}" start="09:01" end="21:01" bindchange="bindTimeChange">
+            <view class="picker">
+              当前选择时间: {{viewTime}}
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class='btn1'>
+        <view bindtap='modal_click_Hidden' class='cancel'>取消</view>
+        <view bindtap='Sure' class='Sure'>确定</view>
+      </view>
+    </view>
+  </view>
+  <view wx:if="{{showModal2}}">
+    <view class='mask_layer' bindtap='modal_click_Hidden2' />
+    <view class='modal_box'>
+      <view class="title">租房申请</view>
+      <view class='content'>
+        <text class='modalMsg'></text>
+        <view class="section">
+          <view class="section__title">租房结束日期</view>
+          <picker mode="date" value="{{endDate}}" start="2022-03-01" end="2030-01-01" bindchange="bindDateChange2">
+            <view class="picker">
+              选择日期: {{endDate}}
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class='btn1'>
+        <view bindtap='modal_click_Hidden2' class='cancel'>取消</view>
+        <view bindtap='Sure2' class='Sure2'>确定</view>
+      </view>
+    </view>
+  </view>
+</view>
+<view class="collection" bindtap="collectionChange">
+  <i-icon wx:if="{{!collection}}" size="40" type="collection" style="margin-left: 10rpx;"/>
+  <i-icon wx:if="{{collection}}" size="40" type="collection_fill" color="#EEEE00" style="margin-left: 10rpx;" />
+  <view class="collectionTitle">收藏</view>
+</view>
+<i-toast id="toast" />

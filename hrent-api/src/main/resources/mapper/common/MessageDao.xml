@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wt.hrentSystem.common.dao.MessageDao">
+
+    <resultMap type="com.wt.hrentSystem.common.entity.Message" id="SysMessageMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="receiverType" column="receiver_type" jdbcType="INTEGER"/>
+        <result property="receiverId" column="receiver_id" jdbcType="VARCHAR"/>
+        <result property="messageName" column="message_name" jdbcType="VARCHAR"/>
+        <result property="text" column="text" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="system" column="system" jdbcType="VARCHAR"/>
+        <result property="createBy.id" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createBy.name" column="create_name" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy.id" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateBy.name" column="update_name" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="remake" column="remake" jdbcType="VARCHAR"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <sql id="messageCols">
+               id,
+               receiver_type,
+               receiver_id,
+               message_name,
+               text,
+               title,
+               state,
+               system,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remake,
+               del_flag
+    </sql>
+
+    <!--查询单个-->
+    <select id="get" resultMap="SysMessageMap">
+        select <include refid="messageCols"></include>
+        from house_rent.sys_message a
+        where id = #{id}
+        and del_flag = 0
+    </select>
+
+<!--    根据实体类条件查询单条数据-->
+    <select id="getByEntity" resultMap="SysMessageMap">
+        select <include refid="messageCols"></include>
+        from house_rent.sys_message a
+        where a.del_flag = 0
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="receiverType != null">
+            and receiver_type = #{receiverType}
+        </if>
+        <if test="receiverId != null and receiverId != ''">
+            and receiver_id = #{receiverId}
+        </if>
+        <if test="messageName != null and messageName != ''">
+            and message_name = #{messageName}
+        </if>
+        <if test="text != null and text != ''">
+            and text = #{text}
+        </if>
+        <if test="state != null">
+            and state = #{state}
+        </if>
+        <if test="system != null and system != ''">
+            and system = #{system}
+        </if>
+        <if test="createBy != null and createBy != ''">
+            and create_by = #{createBy.id}
+        </if>
+        <if test="createDate != null">
+            and create_time = #{createDate}
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            and update_by = #{updateBy.id}
+        </if>
+        <if test="updateDate != null">
+            and update_time = #{updateDate}
+        </if>
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="findList" resultMap="SysMessageMap">
+        select <include refid="messageCols"></include>
+        from house_rent.sys_message a
+        where del_flag = 0
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="receiverType != null">
+            and receiver_type = #{receiverType}
+        </if>
+        <if test="receiverId != null and receiverId != ''">
+            and receiver_id = #{receiverId}
+        </if>
+        <if test="messageName != null and messageName != ''">
+            and message_name = #{messageName}
+        </if>
+        <if test="text != null and text != ''">
+            and text = #{text}
+        </if>
+        <if test="state != null">
+            and state = #{state}
+        </if>
+        <if test="system != null and system != ''">
+            and system = #{system}
+        </if>
+        <if test="createBy != null and createBy != ''">
+            and create_by = #{createBy.id}
+        </if>
+        <if test="createDate != null">
+            and create_time = #{createDate}
+        </if>
+        <if test="updateBy != null and updateBy != ''">
+            and update_by = #{updateBy.id}
+        </if>
+        <if test="updateDate != null">
+            and update_time = #{updateDate}
+        </if>
+        <if test="remake != null and remake != ''">
+            and remake = #{remake}
+        </if>
+        <choose>
+            <when test="page != null and page.orderBy != null and page.orderBy !=''">
+                order by ${page.orderBy}
+            </when>
+            <otherwise>
+                order by update_time desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getNewCount" resultType="java.lang.Integer">
+        select count(1) from sys_message a
+        where a.del_flag = 0
+        and a.receiver_id = #{currentUser.id}
+        and a.state = 0
+    </select>
+
+    <select id="getCountByUserId" resultType="java.lang.Integer">
+        select count(1) from sys_message a
+        where a.del_flag = 0
+        and a.receiver_id = #{userId}
+        and a.state = 0
+    </select>
+
+    <!--查询某个人的消息列表-->
+    <select id="findPersonalMessagePage" resultMap="SysMessageMap">
+        select <include refid="messageCols"></include>
+        from house_rent.sys_message a
+        where a.del_flag = 0
+            <if test="state != null">
+                and state = #{state}
+            </if>
+            <if test="currentUser != null">
+                and receiver_id = #{currentUser.id}
+            </if>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into house_rent.sys_message(id,
+                                        receiver_type,
+                                        receiver_id,
+                                        message_name,
+                                        title,
+                                        text,
+                                        state,
+                                        system,
+                                        create_by,
+                                        create_time,
+                                        update_by,
+                                        update_time,
+                                        remake,
+                                        del_flag)
+        values (#{id},#{receiverType}, #{receiverId}, #{messageName},#{title}, #{text}, #{state},
+                #{system}, #{createBy.id}, #{createDate}, #{updateBy.id}, #{updateDate}, #{remake},
+                #{delFlag})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update house_rent.sys_message
+        <set>
+            <if test="receiverType != null">
+                receiver_type = #{receiverType},
+            </if>
+            <if test="receiverId != null and receiverId != ''">
+                receiver_id = #{receiverId},
+            </if>
+            <if test="messageName != null and messageName != ''">
+                message_name = #{messageName},
+            </if>
+            <if test="text != null and text != ''">
+                text = #{text},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="system != null">
+                system = #{system},
+            </if>
+            <if test="createBy != null and createBy.id != ''">
+                create_by = #{createBy.id},
+            </if>
+            <if test="createDate != null">
+                create_time = #{createDate},
+            </if>
+            <if test="updateBy != null and updateBy.id != ''">
+                update_by = #{updateBy.id},
+            </if>
+            <if test="updateDate != null">
+                update_time = #{updateDate},
+            </if>
+            <if test="remake != null and remake != ''">
+                remake = #{remake},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        update house_rent.sys_message
+        <set>
+            del_flag = 1,
+        </set>
+        where
+        1=1
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+    </delete>
+
+</mapper>
+

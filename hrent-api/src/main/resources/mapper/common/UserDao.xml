@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wt.hrentSystem.common.dao.UserDao">
+
+    <resultMap type="com.wt.hrentSystem.common.entity.User" id="SysUserMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="role" column="role" jdbcType="INTEGER"/>
+        <result property="roleStr" column="role_str" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="loginName" column="login_name" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="pId" column="p_id" jdbcType="VARCHAR"/>
+        <result property="headUrl" column="headUrl" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="birthday" column="birthday" jdbcType="TIMESTAMP"/>
+        <result property="openId" column="openid" jdbcType="VARCHAR"/>
+        <result property="loginTime" column="login_time" jdbcType="TIMESTAMP"/>
+        <result property="houseNum" column="house_num" jdbcType="INTEGER"/>
+        <result property="createBy.id" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createBy.name" column="create_name" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy.id" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateBy.name" column="update_name" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="remake" column="remake" jdbcType="VARCHAR"/>
+        <result property="delFlag" column="del_flag" jdbcType="INTEGER"/>
+    </resultMap>
+
+<!--    用户表相关列-->
+    <sql id="userCols">
+               id,
+               role,
+               role_str,
+               name,
+               login_name,
+               password,
+               email,
+               mobile,
+               p_id,
+               (select p.url from hrent_pic p where p.del_flag = 0 and p.id = a.p_id) as "headUrl",
+               sex,
+               birthday,
+               openid,
+               login_time,
+               (select count(1) from hrent_house_resource hhr where hhr.del_flag = 0 and hhr.create_by=a.id) as "house_num",
+               create_by,
+        create_time,
+        update_by,
+        update_time,
+        remake,
+        del_flag
+    </sql>
+
+<!--    查询单个数据-->
+    <select id="get" resultMap="SysUserMap">
+        select <include refid="userCols"></include>
+        from house_rent.sys_user a
+        where id = #{id}
+          and del_flag = 0
+    </select>
+
+    <!--查询单个-->
+    <select id="getByEntity" resultMap="SysUserMap">
+        select <include refid="userCols"></include>
+        from house_rent.sys_user a
+        where
+        del_flag = 0
+        <if test="role != null and role != ''">
+            and role = #{role}
+        </if>
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="loginName != null and loginName != ''">
+            and login_name = #{loginName}
+        </if>
+        <if test="password != null and password != ''">
+            and password = #{password}
+        </if>
+        <if test="email != null and email != ''">
+            and email = #{email}
+        </if>
+        <if test="mobile != null and mobile != ''">
+            and mobile = #{mobile}
+        </if>
+        <if test="pId != null and pId != ''">
+            and p_id = #{pId}
+        </if>
+    </select>
+
+<!--    查询所有-->
+    <select id="findList" resultMap="SysUserMap">
+        select <include refid="userCols"></include>
+        from house_rent.sys_user a
+        where del_flag = 0
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="role != null and role != ''">
+            and role = #{role}
+        </if>
+        <if test="name != null and name != ''">
+            and name = #{name}
+        </if>
+        <if test="loginName != null and loginName != ''">
+            and login_name = #{loginName}
+        </if>
+        <if test="password != null and password != ''">
+            and password = #{password}
+        </if>
+        <if test="email != null and email != ''">
+            and email = #{email}
+        </if>
+        <if test="mobile != null and mobile != ''">
+            and mobile = #{mobile}
+        </if>
+        <if test="pId != null and pId != ''">
+            and p_id = #{pId}
+        </if>
+        <if test="condition != null and condition != ''">
+            and (a.name like concat('%',#{condition},'%')
+                     or a.login_name like concat('%',#{condition},'%')
+                     or a.mobile like concat('%',#{condition},'%')
+                     or a.email like concat('%',#{condition},'%'))
+        </if>
+        <if test="startTime !=null and endTime != null">
+            and a.create_time between #{startTime} and #{endTime}
+        </if>
+        <choose>
+            <when test="page != null and page.orderBy != null and page.orderBy !=''">
+                order by ${page.orderBy}
+            </when>
+            <otherwise>
+                order by update_time desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findUserByOpenid" resultMap="SysUserMap">
+        select <include refid="userCols"></include>
+        from house_rent.sys_user a
+        where a.del_flag=0
+        and a.openid=#{openId}
+    </select>
+
+
+<!--    新增数据-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into house_rent.sys_user(id,
+                                     role,
+                                     role_str,
+                                     name,
+                                     login_name,
+                                     password,
+                                     email,
+                                     mobile,
+                                     p_id,
+                                     sex,
+                                     birthday,
+                                     openid,
+                                     login_time,
+                                     create_by,
+                                     create_time,
+                                     update_by,
+                                     update_time,
+                                     remake,
+                                     del_flag)
+        values (#{id},#{role},#{roleStr}, #{name}, #{loginName}, #{password}, #{email}, #{mobile},
+                #{pId},#{sex},#{birthday},#{openId},#{loginTime},
+                #{createBy.id}, #{createDate}, #{updateBy.id}, #{updateDate}, #{remake}, #{delFlag})
+    </insert>
+
+<!--    通过主键修改数据-->
+    <update id="update">
+        update house_rent.sys_user
+        <set>
+            <if test="role != null and role != ''">
+                role = #{role},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="loginName != null and loginName != ''">
+                login_name = #{loginName},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="pId != null and pId != ''">
+                p_id = #{pId},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday},
+            </if>
+            <if test="loginTime != null">
+                login_time = #{loginTime},
+            </if>
+            <if test="createBy != null and createBy.id != ''">
+                create_by = #{createBy.id},
+            </if>
+            <if test="createDate != null">
+                create_time = #{createDate},
+            </if>
+            <if test="updateBy != null and updateBy.id != ''">
+                update_by = #{updateBy.id},
+            </if>
+            <if test="updateDate != null">
+                update_time = #{updateDate},
+            </if>
+            <if test="remake != null and remake != ''">
+                remake = #{remake},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+<!--    删除数据，逻辑删除-->
+    <update id="delete">
+        update house_rent.sys_user
+        <set>
+            del_flag = 1
+        </set>
+        <where>
+            1 = 1
+            <if test="id !=null and id != ''">
+                and id = #{id}
+            </if>
+        </where>
+    </update>
+</mapper>
+
